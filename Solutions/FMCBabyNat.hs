@@ -73,42 +73,67 @@ infixl 7 *
 
 -- exponentiation
 (^) :: Nat -> Nat -> Nat
-(^) O n= S O
+(^) O n = S O
+(^) n O = S O
 (^) (S n) m = (n ^ m) * n
-(^) n 0 = S O
-
-infixl 8 ^
+infixr 8 ^
 
 -- quotient
 (/) :: Nat -> Nat -> Nat
-(/) = undefined
+(/) n O = undefined
+(/) n (S m) =
+  case n -* m of
+    O -> O 
+    _ -> S ((n -* S m) / S m)
+infixl 7 /
+
 
 -- remainder
 (%) :: Nat -> Nat -> Nat
-(%) = undefined
+(%) _ O = undefined
+(%) n m = n -* m * (n / m)
+--(%) n m 
+-- |n < m = n
+-- |n >= m = (n-*m)/m 
 
 -- divides
 -- just for a change, we start by defining the "symbolic" operator
 -- and then define `devides` as a synonym to it
 -- again, outputs: O means False, S O means True
 (|||) :: Nat -> Nat -> Nat
-(|||) = undefined
+(|||) O _ = undefined
+(|||) _ O = S O
+(|||) m n = isZero (n % m)
+
+--  case isZero (m % n) of
+--  O ->  O
+--  S O -> S O
+
 
 -- x `absDiff` y = |x - y|
 -- (Careful here: this - is the actual minus operator we know from the integers!)
 absDiff :: Nat -> Nat -> Nat
-absDiff = undefined
+absDiff n m = 
+  case (n -* m) of
+  O -> m -* n
+  _ -> n -* m
+
 
 (|-|) :: Nat -> Nat -> Nat
 (|-|) = absDiff
 
 factorial :: Nat -> Nat
-factorial = undefined
+factorial O = S O
+factorial (S n) = (S n) * factorial n
 
 -- signum of a number (-1, 0, or 1)
 sg :: Nat -> Nat
-sg = undefined
+sg O = O
+sg (S _) = S O 
 
 -- lo b a is the floor of the logarithm base b of a
 lo :: Nat -> Nat -> Nat
-lo = undefined
+lo _ O = undefined
+lo (S O) _ = undefined 
+lo a b = undefined
+-- travada no último caso 
