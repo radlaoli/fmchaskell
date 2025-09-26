@@ -73,7 +73,6 @@ infixl 7 *
 
 -- exponentiation
 (^) :: Nat -> Nat -> Nat
-(^) O n = S O
 (^) n O = S O
 (^) (S n) m = (n ^ m) * n
 infixr 8 ^
@@ -96,6 +95,8 @@ infixl 7 /
 -- |n < m = n
 -- |n >= m = (n-*m)/m 
 
+infixl 7 %
+
 -- divides
 -- just for a change, we start by defining the "symbolic" operator
 -- and then define `devides` as a synonym to it
@@ -104,6 +105,7 @@ infixl 7 /
 (|||) O _ = undefined
 (|||) _ O = S O
 (|||) m n = isZero (n % m)
+infix 4 |||
 
 --  case isZero (m % n) of
 --  O ->  O
@@ -121,6 +123,7 @@ absDiff n m =
 
 (|-|) :: Nat -> Nat -> Nat
 (|-|) = absDiff
+infixl 9 |-|
 
 factorial :: Nat -> Nat
 factorial O = S O
@@ -135,5 +138,9 @@ sg (S _) = S O
 lo :: Nat -> Nat -> Nat
 lo _ O = undefined
 lo (S O) _ = undefined 
-lo a b = undefined
--- travada no último caso 
+lo b a =
+  case a / b of
+    O -> O
+    q -> S (lo b q)
+  
+
