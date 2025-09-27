@@ -43,15 +43,28 @@ instance Eq Nat where
 
 instance Ord Nat where
 
-    (<=) = undefined
+    (<=) O O = True
+    (<=) _ O = False
+    (<=) O (S _) = True
+    (<=) (S n) (S m) = n <= m 
 
     -- Ord does not REQUIRE defining min and max.
     -- Howevener, you should define them WITHOUT using (<=).
     -- Both are binary functions: max m n = ..., etc.
 
-    min = undefined
+    min O _ = O
+    min _ O = O
+    min (S n) (S m) = 
+        case n <= m of
+        True -> S n
+        False -> S m  
 
-    max = undefined
+    max O n = n
+    max n O = n
+    max (S n) (S m) =
+        case n <= m of
+        True -> S m
+        False -> S n
 
 
 ----------------------------------------------------------------
@@ -59,17 +72,36 @@ instance Ord Nat where
 ----------------------------------------------------------------
 
 isZero :: Nat -> Bool
-isZero = undefined
+isZero O = True
+isZero (S _) = False
 
 -- pred is the predecessor but we define zero's to be zero
 pred :: Nat -> Nat
-pred = undefined
+pred O = O
+pred (S n) = n
 
 even :: Nat -> Bool
-even = undefined
+even O = True
+even (S n) = odd n
 
 odd :: Nat -> Bool
-odd = undefined
+odd O = False
+odd (S n) = even n 
+
+----------------------------------------------------------------
+-- some sugar
+----------------------------------------------------------------
+
+zero, one, two, three, four, five, six, seven, eight :: Nat
+zero  = O
+one   = S zero
+two   = S one
+three = S two
+four  = S three
+five  = S four
+six   = S five
+seven = S six
+eight = S seven
 
 
 ----------------------------------------------------------------
@@ -90,11 +122,8 @@ monus O n = O
 monus n O = n
 monus (S n) (S m) = monus n m
 
-(-*) :: Nat -> Nat -> Nat
-(-*) = monus
-
 (<->) :: Nat -> Nat -> Nat
-(<->) = (-*)
+(<->) = monus
 
 -- multiplication
 times :: Nat -> Nat -> Nat
@@ -106,21 +135,28 @@ times (S n) m = m <+> (times n m)
 
 -- power / exponentiation
 pow :: Nat -> Nat -> Nat
-pow = undefined
+pow n O = S O
+pow O (S m) = O
+pow n (S m) = n <*> pow n m
 
 exp :: Nat -> Nat -> Nat
-exp = undefined
+exp = pow
 
 (<^>) :: Nat -> Nat -> Nat
-(<^>) = undefined
+(<^>) = pow
 
 -- quotient
 (</>) :: Nat -> Nat -> Nat
-(</>) = undefined
+(</>) n O = undefined
+(</>) n (S m) =
+  case n <-> m of
+    O -> O 
+    _ -> S ((n <-> S m) </> S m)
 
 -- remainder
 (<%>) :: Nat -> Nat -> Nat
-(<%>) = undefined
+(<%>) _ O = undefined
+(<%>) n m = n <-> m <*> (n </> m) 
 
 -- euclidean division
 eucdiv :: (Nat, Nat) -> (Nat, Nat)
@@ -128,7 +164,9 @@ eucdiv = undefined
 
 -- divides
 (<|>) :: Nat -> Nat -> Bool
-(<|>) = undefined
+(<|>) O _ = undefined
+(<|>) _ O = True
+(<|>) m n = isZero (n <%> m)
 
 divides = (<|>)
 
@@ -137,12 +175,16 @@ divides = (<|>)
 -- x `dist` y = |x - y|
 -- (Careful here: this - is the real minus operator!)
 dist :: Nat -> Nat -> Nat
-dist = undefined
+dist n m = 
+  case (n <-> m) of
+  O -> m <-> n
+  _ -> n <-> m
 
 (|-|) = dist
 
 factorial :: Nat -> Nat
-factorial = undefined
+factorial O = S O
+factorial (S n) = (S n) <*> factorial n
 
 -- signum of a number (-1, 0, or 1)
 sg :: Nat -> Nat
@@ -151,7 +193,12 @@ sg (S _) = S O
 
 -- lo b a is the floor of the logarithm base b of a
 lo :: Nat -> Nat -> Nat
-lo = undefined
+lo _ O = undefined
+lo (S O) _ = undefined 
+lo b a =
+  case a </> b of
+    O -> O
+    q -> S (lo b q)
 
 
 ----------------------------------------------------------------
@@ -162,10 +209,12 @@ lo = undefined
 -- Do NOT use the following functions in the definitions above!
 
 toNat :: Integral a => a -> Nat
-toNat = undefined
+toNat 0 = O
+toNat n = S (toNat (n - 1)) 
 
 fromNat :: Integral a => Nat -> a
-fromNat = undefined
+fromNat O = 0
+fromNat (S n) = 1 + fromNat n
 
 
 -- Voilá: we can now easily make Nat an instance of Num.
