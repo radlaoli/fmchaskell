@@ -2,6 +2,7 @@
 
 module FMCList where
 
+import FMCNat
 import Prelude
     ( Char , String , Int , Integer , Double , Float , Bool(..)
     , Num(..) , Integral(..) , Enum(..) , Ord(..) , Eq(..)
@@ -156,12 +157,25 @@ concat (xs:xs') = xs ++ concat xs'
 
 -- (!!)
 
--- filter
--- map
+filter :: (a -> Bool) -> [a] ->  [a]
+filter _ [] = []
+filter p (x:xs) 
+  | p x       = x : filter p xs
+  | otherwise = filter p xs
 
--- cycle
--- repeat
--- replicate
+--map :: (a -> b) -> [a] -> [a]
+
+cycle :: [a] -> [a]
+cycle xs = xs ++ cycle xs
+
+
+repeat :: a -> [a]
+repeat n = n : repeat n
+
+
+replicate :: Int -> a -> [a]
+replicate 0 _ = []
+replicate n m = m : replicate (n-1) m 
 
 -- isPrefixOf
 -- isInfixOf
