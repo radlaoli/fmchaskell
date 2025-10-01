@@ -71,14 +71,14 @@ null _ = False
 
 length :: Integral i => [a] -> i
 length [] = 0
-lenght (x:xs) = 1 + lenght xs 
+length (x:xs) = 1 + length xs
 
 sum :: Num a => [a] -> a
 sum [] = 0
 sum (x:xs) = x + sum xs
 
 product :: Num a => [a] -> a
-product [] = 0
+product [] = 1
 product (x:xs) = x * product xs 
 
 reverse :: [a] -> [a]
@@ -98,8 +98,9 @@ infixr 5 ++
 snoc :: a -> [a] -> [a]
 snoc x xs= xs ++ [x] 
 
+--flip snoc
 (<:) :: [a] -> a -> [a]
-(<:) = flip snoc
+(<:) xs x = snoc x xs
 
 -- different implementation of (++)
 (+++) :: [a] -> [a] -> [a]
@@ -111,8 +112,15 @@ xs +++ (y:ys) = (xs +++ [y]) +++ ys
 -- (hmm?!)
 infixl 5 +++
 
--- minimum :: Ord a => [a] -> a
--- maximum :: Ord a => [a] -> a
+minimum :: (Ord a) => [a] -> a
+minimum [] = error "empty list"
+minimum [x] = x
+minimum (x : xs) = min x (minimum xs)
+
+maximum :: Ord a => [a] -> a
+maximum [] = error "empty list"
+maximum [x] = x
+maximum (x : xs) = max x (maximum xs)
 
 -- take
 -- drop
@@ -129,10 +137,17 @@ infixl 5 +++
 -- any
 -- all
 
--- and
--- or
+and :: [Bool] -> Bool
+and [] = True
+and (x:xs) = x && and xs
 
--- concat
+or :: [Bool] -> Bool
+or [] = True
+or (x:xs) = x || or xs
+
+concat :: [[a]] -> [a]
+concat [] = []
+concat (xs:xs') = xs ++ concat xs'
 
 -- elem using the funciton 'any' above
 
