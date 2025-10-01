@@ -123,13 +123,23 @@ maximum [] = error "empty list"
 maximum [x] = x
 maximum (x : xs) = max x (maximum xs)
 
--- take
--- drop
+take :: Nat -> [a] -> [a]
+take O _ = []
+take _ [] = []
+take n (x:xs) = x: take (n - 1) xs
+
+drop :: Nat -> [a] -> [a]
+drop O xs  = xs
+drop _ [] = []
+drop n (_:xs) = drop (n-1) xs
 
 -- takeWhile
 -- dropWhile
 
--- tails
+tails :: [a] -> [[a]]
+tails [] = [[]]
+tails (x:xs) = (x:xs) : tails xs
+
 -- init
 -- inits
 
@@ -163,7 +173,9 @@ filter p (x:xs)
   | p x       = x : filter p xs
   | otherwise = filter p xs
 
---map :: (a -> b) -> [a] -> [a]
+map :: (a -> b) -> [a] -> [b]
+map p [] = []
+map p (x:xs) = p x : map p xs
 
 cycle :: [a] -> [a]
 cycle xs = xs ++ cycle xs
