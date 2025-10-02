@@ -1,6 +1,6 @@
 {-# LANGUAGE GADTs #-}
 
-module ExList where
+module FMCFun where
 
 import Prelude hiding
     ( (.) , ($)
@@ -43,5 +43,5 @@ iterate :: (a -> a) -> a -> [a]
 iterate f a = a : iterate f (f a) 
 
 -- orbit
---orbit = flip iterate
+orbit = flip iterate
 

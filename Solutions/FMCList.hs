@@ -140,13 +140,23 @@ tails :: [a] -> [[a]]
 tails [] = [[]]
 tails (x:xs) = (x:xs) : tails xs
 
--- init
--- inits
+init :: [a] -> [a]
+init [_] = []
+init (x:xs) = x : init xs
+
+inits :: [a] -> [[a]]
+inits [] = [[]]
+inits (x:xs) = [] : map (x:) (inits xs)
 
 -- subsequences
 
--- any
--- all
+any :: (a -> Bool) -> [a] -> Bool
+any f [] = False
+any f (x:xs) = f x || any f xs
+
+all :: (a -> Bool) -> [a] -> Bool
+all f [] = True
+all f (x:xs) = f x && all f xs
 
 and :: [Bool] -> Bool
 and [] = True
@@ -193,8 +203,16 @@ replicate n m = m : replicate (n-1) m
 -- isInfixOf
 -- isSuffixOf
 
--- zip
--- zipWith
+zip :: [a] -> [b] -> [(a,b)]
+zip [] _ = []
+zip _ [] = []
+zip (x:xs) (y:ys) = (x,y): zip xs ys
+
+zipWith :: (a -> b -> c) -> [a] -> [b] -> [c]
+zipWith f _ [] = []
+zipWith f [] _ = []
+zipWith f (x:xs) (y:ys) = (f x y): zipWith f xs ys
+
 
 -- intercalate
 -- nub
