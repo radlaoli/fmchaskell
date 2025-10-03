@@ -133,8 +133,19 @@ drop O xs  = xs
 drop _ [] = []
 drop n (_:xs) = drop (n-1) xs
 
--- takeWhile
--- dropWhile
+takeWhile :: (a -> Bool) -> [a] -> [a]
+takeWhile f [] = []
+takeWhile f (x:xs) =
+  case f x of
+  True -> x: takeWhile f xs
+  False -> [] 
+
+dropWhile :: (a -> Bool) -> [a] -> [a]
+dropWhile f [] = []
+dropWhile f (x:xs) =
+  case f x of
+  False -> x:xs
+  True -> dropWhile f xs
 
 tails :: [a] -> [[a]]
 tails [] = [[]]
@@ -148,7 +159,10 @@ inits :: [a] -> [[a]]
 inits [] = [[]]
 inits (x:xs) = [] : map (x:) (inits xs)
 
--- subsequences
+subsequences :: [a] -> [[a]]
+subsequences [] = [[]]
+subsequences (x:xs) = subsequences xs ++ map (x:) (subsequences xs)
+
 
 any :: (a -> Bool) -> [a] -> Bool
 any f [] = False
@@ -171,9 +185,14 @@ concat [] = []
 concat (xs:xs') = xs ++ concat xs'
 
 -- elem using the funciton 'any' above
+elem :: Eq a => a -> [a] -> Bool
+elem y xs = any (== y) xs
 
 -- elem': same as elem but elementary definition
 -- (without using other functions except (==))
+elem' :: Eq a => a -> [a] -> Bool
+elem' _ [] = False
+elem' y (x:xs) = (y == x) || elem y xs
 
 -- (!!)
 
@@ -199,9 +218,20 @@ replicate :: Int -> a -> [a]
 replicate 0 _ = []
 replicate n m = m : replicate (n-1) m 
 
--- isPrefixOf
--- isInfixOf
--- isSuffixOf
+isPrefixOf :: Eq a => [a] -> [a] -> Bool 
+isPrefixOf [] _ = True
+isPrefixOf _ [] = False
+isPrefixOf (x:xs) (y:ys) = x == y && isPrefixOf xs ys
+
+isInfixOf :: Eq a => [a] -> [a] -> Bool
+isInfixOf [] _ = True
+isInfixOf _ [] = False
+isInfixOf xs ys = isPrefixOf xs ys || isInfixOf xs (tail ys)
+
+isSuffixOf :: Eq a => [a] -> [a] -> Bool 
+isSuffixOf [] _ = True
+isSuffixOf _ [] = False
+isSuffixOf xs ys = reverse xs `isPrefixOf` reverse ys
 
 zip :: [a] -> [b] -> [(a,b)]
 zip [] _ = []
