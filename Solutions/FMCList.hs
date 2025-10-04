@@ -194,7 +194,9 @@ elem' :: Eq a => a -> [a] -> Bool
 elem' _ [] = False
 elem' y (x:xs) = (y == x) || elem y xs
 
--- (!!)
+(!!) :: [a] -> Int -> a
+(!!) (x:xs) 0 = x
+(!!) (x:xs) n = xs !! (n-1)
 
 filter :: (a -> Bool) -> [a] ->  [a]
 filter _ [] = []
@@ -244,25 +246,52 @@ zipWith f [] _ = []
 zipWith f (x:xs) (y:ys) = (f x y): zipWith f xs ys
 
 
--- intercalate
--- nub
+intercalate :: [a] -> [[a]] -> [a]
+intercalate _ [] = []
+intercalate _ [x] = x
+intercalate inter (x:xs) = x ++ inter ++ intercalate inter xs
+
+nub :: Eq a => [a] -> [a]
+nub [] = []
+nub (x:xs)
+  | x `elem` xs = nub xs
+  | otherwise = x: nub xs
 
 -- splitAt
 -- what is the problem with the following?:
 -- splitAt n xs  =  (take n xs, drop n xs)
 
--- break
+splitAt :: Int -> [a] -> ([a],[a])
+splitAt n [] = ([],[])
+splitAt 0 xs = ([] , xs)
+splitAt n (x:xs) = 
+    case splitAt (n-1) xs of
+      (ys, zs) -> (x:ys, zs)
 
--- lines
--- words
--- unlines
--- unwords
+break :: (a -> Bool) -> [a] -> ([a],[a])
+break _ [] = ([],[])
+break f (x:xs) = 
+  case f x of
+    True -> ([], x:xs)
+    False -> (x:ys, zs)
+      where (ys, zs) = break f xs
+    
+
+lines :: String -> [String]
+
+words :: String -> [String]
+
+unlines :: [String] -> String
+
+unwords :: [String] -> String
 
 -- transpose
 
 -- checks if the letters of a phrase form a palindrome (see below for examples)
 palindrome :: String -> Bool
-palindrome = undefined
+palindrome s = (base s) == reverse (base s)
+  where
+  base = L.filter C.isAlpha . map C.toLower
 
 {-
 
