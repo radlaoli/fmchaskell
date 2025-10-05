@@ -194,7 +194,9 @@ elem' :: Eq a => a -> [a] -> Bool
 elem' _ [] = False
 elem' y (x:xs) = (y == x) || elem y xs
 
--- (!!)
+(!!) :: [a] -> Int -> a
+(x:xs) !! 0 = x 
+(x:xs) !! n = xs !! (n-1)        
 
 filter :: (a -> Bool) -> [a] ->  [a]
 filter _ [] = []
@@ -275,4 +277,3 @@ Examples of palindromes:
 "Doc, note I dissent.  A fast never prevents a fatness.  I diet on cod."
 
 -}
-
